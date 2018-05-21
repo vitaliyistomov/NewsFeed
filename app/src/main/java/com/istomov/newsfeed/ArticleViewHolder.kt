@@ -2,6 +2,8 @@ package com.istomov.newsfeed
 
 import android.content.Intent
 import android.support.v7.widget.RecyclerView
+import android.text.Html
+import android.text.Html.FROM_HTML_SEPARATOR_LINE_BREAK_BLOCKQUOTE
 import android.text.TextUtils
 import android.view.View
 import android.widget.ImageView
@@ -16,7 +18,7 @@ class ArticleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun invalidate(article: Article) {
         title.text = article.title
-        description.text = article.description
+        description.text = Html.fromHtml(article.description).toString()
         itemView.setOnClickListener {
             val intent = Intent(itemView.context, PreviewActivity::class.java)
             intent.putExtra(EXTRA_URL, article.link)
