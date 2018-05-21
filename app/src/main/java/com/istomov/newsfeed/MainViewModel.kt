@@ -35,7 +35,6 @@ class MainViewModel : ViewModel() {
             }
 
             override fun onError() {
-                articles.value = emptyList()
             }
         })
     }
