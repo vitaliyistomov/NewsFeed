@@ -1,6 +1,7 @@
 package com.istomov.newsfeed
 
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.View
@@ -25,9 +26,11 @@ class PreviewActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.preview_progress_bar)
         webView = findViewById(R.id.webview_preview)
 
-        setSupportActionBar(toolbar)
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
-        toolbar.setNavigationOnClickListener({ onBackPressed() })
+        toolbar.let {
+            setSupportActionBar(it)
+            it.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+            it.setNavigationOnClickListener({ onBackPressed() })
+        }
 
         webView.isScrollbarFadingEnabled = false
         webView.webViewClient = object : WebViewClient() {

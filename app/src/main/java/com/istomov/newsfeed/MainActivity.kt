@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -36,17 +37,49 @@ class MainActivity : AppCompatActivity() {
         list.adapter = adapter
         list.layoutManager = LinearLayoutManager(this)
 
-        fab.setOnClickListener({ Snackbar.make(root, "Blah", Snackbar.LENGTH_SHORT).show() })
+        fab.setOnClickListener { showFeedsPicker() }
 
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        with(viewModel) {
+            setSources(listOf("http://feeds.bbci.co.uk/news/uk/rss.xml"))
+            getArticles().observe(this@MainActivity, Observer { onDataReceived(it) })
+        }
 
-        viewModel.getArticles(listOf("http://feeds.bbci.co.uk/news/uk/rss.xml"))
-                .observe(this, Observer { doOnDataArrives(it) })
+        Snackbar.make(root, "The feed is sorted by the publication date, newest first", Snackbar.LENGTH_LONG).show()
     }
 
-    private fun doOnDataArrives(items: List<Article>?) {
+    private fun onDataRequested() {
+        progressBar.visibility = View.VISIBLE
+        list.visibility = View.GONE
+    }
+
+    private fun onDataReceived(items: List<Article>?) {
         progressBar.visibility = View.GONE
         list.visibility = View.VISIBLE
         adapter.setItems(items)
+    }
+
+    private fun showFeedsPicker() {
+        AlertDialog.Builder(this)
+                .setMultiChoiceItems(viewModel.urls, viewModel.checkedValues, { _, item, checked ->
+                    viewModel.checkedValues[item] = checked
+                })
+                .setNegativeButton("Close", null)
+                .setPositiveButton("OK", { _, _ ->
+                    val selectedSources = mutableListOf<String>()
+                    with(viewModel) {
+                        urls.forEachIndexed({ i, value ->
+                            if (checkedValues[i]) {
+                                selectedSources.add(value)
+                            }
+                        })
+
+                        val changed = setSources(selectedSources)
+                        if (changed) {
+                            onDataRequested()
+                        }
+                    }
+                })
+                .show()
     }
 }
