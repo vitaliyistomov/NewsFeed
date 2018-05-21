@@ -16,7 +16,9 @@
             android:name="android.webkit.WebView.EnableSafeBrowsing"
             android:value="true" />
 
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,7 +26,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".PreviewActivity" />
+        <activity
+            android:name=".PreviewActivity"
+            android:configChanges="orientation" />
     </application>
 
 </manifest>
