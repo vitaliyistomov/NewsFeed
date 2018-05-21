@@ -1,5 +1,6 @@
 package com.istomov.newsfeed
 
+import android.content.Intent
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.view.View
@@ -16,6 +17,11 @@ class ArticleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun invalidate(article: Article) {
         title.text = article.title
         description.text = article.description
+        itemView.setOnClickListener {
+            val intent = Intent(itemView.context, PreviewActivity::class.java)
+            intent.putExtra(EXTRA_URL, article.link)
+            itemView.context.startActivity(intent);
+        }
         if (TextUtils.isEmpty(article.image)) {
             Picasso.get()
                     .load(R.drawable.ic_placeholder_48dp)
