@@ -1,9 +1,11 @@
 package com.istomov.newsfeed
 
+import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
@@ -17,6 +19,8 @@ class PreviewActivity : AppCompatActivity() {
     private lateinit var toolbar: Toolbar
     private lateinit var progressBar: ProgressBar
     private lateinit var webView: WebView
+
+    private lateinit var url: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +46,7 @@ class PreviewActivity : AppCompatActivity() {
             override fun onPageFinished(view: WebView?, url: String?) = onFirstPageLoadingFinished()
         }
 
-        val url = intent.getStringExtra(EXTRA_URL)
+        url = intent.getStringExtra(EXTRA_URL)
         webView.loadUrl(url)
     }
 
@@ -57,5 +61,30 @@ class PreviewActivity : AppCompatActivity() {
         } else {
             super.onBackPressed()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        // Inflate menu resource file.
+        menuInflater.inflate(R.menu.menu_preview, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        return when {
+            item == null -> super.onOptionsItemSelected(item)
+            item.itemId == R.id.menu_item_share -> {
+                startActivity(prepareShareAction())
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun prepareShareAction(): Intent {
+        val sendIntent = Intent()
+        sendIntent.action = Intent.ACTION_SEND
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "Have a look at this link! $url")
+        sendIntent.type = "text/plain"
+        return sendIntent
     }
 }
